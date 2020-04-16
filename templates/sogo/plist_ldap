@@ -1,0 +1,42 @@
+<!-- LDAP Configuration -->
+<dict>
+    <key>type</key>
+    <string>ldap</string>
+    <key>id</key>
+    <string>$${line}_ldap</string>
+
+    <key>CNFieldName</key>
+    <string>cn</string>
+    <key>IDFieldName</key>
+    <string>cn</string>
+    <key>UIDFieldName</key>
+    <string>userPrincipalName</string>
+
+    <key>baseDN</key>
+    <string>$ldap_base_dn</string>
+
+    <key>bindDN</key>
+    <string>$ldap_bind_dn</string>
+    <key>bindPassword</key>
+    <string>$ldap_bind_dn_password</string>
+    <key>bindFields</key>
+    <array>
+        <string>userPrincipalName</string>
+    </array>
+
+    <key>bindAsCurrentUser</key>
+    <string>YES</string>
+
+    <key>hostname</key>
+    <string>ldap://$ldap_host:389</string>
+    <key>canAuthenticate</key>
+    <string>YES</string>
+
+    <key>isAddressBook</key>
+    <string>NO</string>
+    <key>displayName</key>
+    <string>Active Directory</string>
+
+    <key>scope</key>
+    <string>SUB</string>
+</dict>
