@@ -34,7 +34,7 @@ def main():
         time.sleep(interval)
 
 def sync():
-    ldap_connector = ldap.initialize(f"ldaps://{config['LDAP_HOST']}")
+    ldap_connector = ldap.initialize(f"{config['LDAP_HOST']}")
     ldap_connector.set_option(ldap.OPT_REFERRALS, 0)
     ldap_connector.simple_bind_s(config['LDAP_BIND_DN'], config['LDAP_BIND_DN_PASSWORD'])
 
