@@ -23,7 +23,7 @@ A python script periodically checks and creates new LDAP accounts and deactivate
             - ./data/conf/dovecot:/conf/dovecot:rw
             - ./data/conf/sogo:/conf/sogo:rw
         environment:
-            - LDAP-MAILCOW_LDAP_HOST=dc.example.local
+            - LDAP-MAILCOW_LDAP_HOST=ldap(s)://dc.example.local
             - LDAP-MAILCOW_LDAP_BASE_DN=OU=Mail Users,DC=example,DC=local
             - LDAP-MAILCOW_LDAP_BIND_DN=CN=Bind DN,CN=Users,DC=example,DC=local
             - LDAP-MAILCOW_LDAP_BIND_DN_PASSWORD=BindPassword
