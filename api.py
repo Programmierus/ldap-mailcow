@@ -5,7 +5,9 @@ def __post_request(url, json_data):
     api_url = f"{api_host}/{url}"
     headers = {'X-API-Key': api_key, 'Content-type': 'application/json'}
 
-    rsp = requests.post(api_url, headers=headers, json=json_data).json()
+    req = requests.post(api_url, headers=headers, json=json_data)
+    rsp = req.json()
+    req.close()
 
     if isinstance(rsp, list):
         rsp = rsp[0]
@@ -51,7 +53,9 @@ def __delete_user(email):
 def check_user(email):
     url = f"{api_host}/api/v1/get/mailbox/{email}"
     headers = {'X-API-Key': api_key, 'Content-type': 'application/json'}
-    rsp = requests.get(url, headers=headers).json()
+    req = requests.get(url, headers=headers)
+    rsp = req.json()
+    req.close()
     
     if not isinstance(rsp, dict):
         sys.exit("API get/mailbox: got response of a wrong type")
