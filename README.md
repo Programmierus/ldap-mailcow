@@ -8,7 +8,7 @@ Adds LDAP accounts to mailcow-dockerized and enables LDAP (e.g., Active Director
 * [Limitations](#limitations)
   * [WebUI and EAS authentication](#webui-and-eas-authentication)
   * [Two-ways sync](#two-ways-sync)
-* [Customizations / Integration help](#customizations-integration-help)
+* [Customizations & Integration help](#customizations--integration-help)
 
 ## How does it work
 
@@ -87,7 +87,7 @@ As a side-effect, It will also allow logging into mailcow UI using mailcow app p
 
 Users from your LDAP directory will be added (and deactivated if disabled/not found) to your mailcow database. Not vice-versa, and this is by design.
 
-## Customizations / Integration help
+## Customizations & Integration help
 
 External authentication (identify federation) is an enterprise feature [for mailcow](https://github.com/mailcow/mailcow-dockerized/issues/2316#issuecomment-491212921). That’s why I developed an external solution, and it is unlikely that it’ll be directly integrated into mailcow ever.
 
