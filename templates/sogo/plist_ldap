@@ -28,7 +28,7 @@
     <string>YES</string>
 
     <key>hostname</key>
-    <string>ldap://$ldap_host:389</string>
+    <string>$ldap_uri</string>
     <key>canAuthenticate</key>
     <string>YES</string>
 

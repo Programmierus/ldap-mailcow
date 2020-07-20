@@ -34,12 +34,12 @@ def main():
         time.sleep(interval)
 
 def sync():
-    ldap_connector = ldap.initialize(f"{config['LDAP_HOST']}")
+    ldap_connector = ldap.initialize(f"{config['LDAP_URI']}")
     ldap_connector.set_option(ldap.OPT_REFERRALS, 0)
     ldap_connector.simple_bind_s(config['LDAP_BIND_DN'], config['LDAP_BIND_DN_PASSWORD'])
 
     ldap_results = ldap_connector.search_s(config['LDAP_BASE_DN'], ldap.SCOPE_SUBTREE, 
-                '(&(objectClass=user)(objectCategory=person))', 
+                config['LDAP_FILTER'], 
                 ['userPrincipalName', 'cn', 'userAccountControl'])
 
     ldap_results = map(lambda x: (
@@ -122,7 +122,7 @@ def apply_config(config_file, config_data):
 
 def read_config():
     required_config_keys = [
-        'LDAP-MAILCOW_LDAP_HOST', 
+        'LDAP-MAILCOW_LDAP_URI', 
         'LDAP-MAILCOW_LDAP_BASE_DN',
         'LDAP-MAILCOW_LDAP_BIND_DN', 
         'LDAP-MAILCOW_LDAP_BIND_DN_PASSWORD',
@@ -139,6 +139,8 @@ def read_config():
 
         config[config_key.replace('LDAP-MAILCOW_', '')] = os.environ[config_key]
 
+    config['LDAP_FILTER'] = os.environ['LDAP-MAILCOW_LDAP_FILTER'] if 'LDAP-MAILCOW_LDAP_FILTER' in os.environ else '(&(objectClass=user)(objectCategory=person))'
+
     return config
 
 def read_dovecot_passdb_conf_template():
@@ -146,7 +148,7 @@ def read_dovecot_passdb_conf_template():
         data = Template(f.read())
 
     return data.substitute(
-        ldap_host=config['LDAP_HOST'], 
+        ldap_uri=config['LDAP_URI'], 
         ldap_base_dn=config['LDAP_BASE_DN']
         )
 
@@ -155,7 +157,7 @@ def read_sogo_plist_ldap_template():
         data = Template(f.read())
 
     return data.substitute(
-        ldap_host=config['LDAP_HOST'], 
+        ldap_uri=config['LDAP_URI'], 
         ldap_base_dn=config['LDAP_BASE_DN'],
         ldap_bind_dn=config['LDAP_BIND_DN'],
         ldap_bind_dn_password=config['LDAP_BIND_DN_PASSWORD']
