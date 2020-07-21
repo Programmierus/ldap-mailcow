@@ -135,11 +135,18 @@ def read_config():
 
     for config_key in required_config_keys:
         if config_key not in os.environ:
-            sys.exit (f"Required envrionment value {config_key} is not set")
+            sys.exit (f"Required environment value {config_key} is not set")
 
         config[config_key.replace('LDAP-MAILCOW_', '')] = os.environ[config_key]
 
+    if 'LDAP-MAILCOW_LDAP_FILTER' in os.environ and 'LDAP-MAILCOW_SOGO_LDAP_FILTER' not in os.environ:
+        sys.exit('LDAP-MAILCOW_SOGO_LDAP_FILTER is required when you specify LDAP-MAILCOW_LDAP_FILTER')
+
+    if 'LDAP-MAILCOW_SOGO_LDAP_FILTER' in os.environ and 'LDAP-MAILCOW_LDAP_FILTER' not in os.environ:
+        sys.exit('LDAP-MAILCOW_LDAP_FILTER is required when you specify LDAP-MAILCOW_SOGO_LDAP_FILTER')
+
     config['LDAP_FILTER'] = os.environ['LDAP-MAILCOW_LDAP_FILTER'] if 'LDAP-MAILCOW_LDAP_FILTER' in os.environ else '(&(objectClass=user)(objectCategory=person))'
+    config['SOGO_LDAP_FILTER'] = os.environ['LDAP-MAILCOW_SOGO_LDAP_FILTER'] if 'LDAP-MAILCOW_SOGO_LDAP_FILTER' in os.environ else "objectClass='user' AND objectCategory='person'"
 
     return config
 
@@ -160,7 +167,8 @@ def read_sogo_plist_ldap_template():
         ldap_uri=config['LDAP_URI'], 
         ldap_base_dn=config['LDAP_BASE_DN'],
         ldap_bind_dn=config['LDAP_BIND_DN'],
-        ldap_bind_dn_password=config['LDAP_BIND_DN_PASSWORD']
+        ldap_bind_dn_password=config['LDAP_BIND_DN_PASSWORD'],
+        sogo_ldap_filter=config['SOGO_LDAP_FILTER']
         )
 
 def read_dovecot_extra_conf():

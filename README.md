@@ -8,7 +8,7 @@ Adds LDAP accounts to mailcow-dockerized and enables LDAP (e.g., Active Director
 * [Limitations](#limitations)
   * [WebUI and EAS authentication](#webui-and-eas-authentication)
   * [Two-ways sync](#two-ways-sync)
-* [Customizations & Integration help](#customizations--integration-help)
+* [Customizations and Integration support](#customizations-and-integration-support)
 
 ## How does it work
 
@@ -39,6 +39,7 @@ A python script periodically checks and creates new LDAP accounts and deactivate
             - LDAP-MAILCOW_API_KEY=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX
             - LDAP-MAILCOW_SYNC_INTERVAL=300
             - LDAP-MAILCOW_LDAP_FILTER=(&(objectClass=user)(objectCategory=person)(memberOf:1.2.840.113556.1.4.1941:=CN=Group,CN=Users,DC=example DC=local))
+            - LDAP-MAILCOW_SOGO_LDAP_FILTER=objectClass='user' AND objectCategory='person' AND memberOf:1.2.840.113556.1.4.1941:='CN=Group,CN=Users,DC=example DC=local'
     ```
 
 3. Configure environmental variables:
@@ -50,7 +51,9 @@ A python script periodically checks and creates new LDAP accounts and deactivate
     * `LDAP-MAILCOW_API_HOST` - mailcow API url. Make sure it's enabled and accessible from within the container for both reads and writes
     * `LDAP-MAILCOW_API_KEY` - mailcow API key (read/write)
     * `LDAP-MAILCOW_SYNC_INTERVAL` - interval in seconds between LDAP synchronizations
-    * `LDAP-MAILCOW_LDAP_FILTER` - _optional_ LDAP filter to apply, defaults to `(&(objectClass=user)(objectCategory=person))`
+    * **Optional** LDAP filters (see example above). SOGo uses special syntax, so you either have to **specify both or none**:
+        * `LDAP-MAILCOW_LDAP_FILTER` - LDAP filter to apply, defaults to `(&(objectClass=user)(objectCategory=person))`
+        * `LDAP-MAILCOW_SOGO_LDAP_FILTER` - LDAP filter to apply for SOGo ([special syntax](https://sogo.nu/files/docs/SOGoInstallationGuide.html#_authentication_using_ldap)), defaults to `objectClass='user' AND objectCategory='person'`
 
 4. Start additional container: `docker-compose up -d ldap-mailcow`
 5. Check logs `docker-compose logs ldap-mailcow`
@@ -69,7 +72,7 @@ These files have been tested against Active Directory running on Windows Server 
 
 ### WebUI and EAS authentication
 
-This tool enables authentication for Dovecot and SOGo, which means you will be able to log into POP3, SMTP, IMAP, and SOGo Web-Interface. **You will not be able to log into mailcow UI or EAS.**
+This tool enables authentication for Dovecot and SOGo, which means you will be able to log into POP3, SMTP, IMAP, and SOGo Web-Interface. **You will not be able to log into mailcow UI or EAS using your LDAP credentials by default.**
 
 As a workaround, you can hook IMAP authentication directly to mailcow by adding the following code above [this line](https://github.com/mailcow/mailcow-dockerized/blob/48b74d77a0c39bcb3399ce6603e1ad424f01fc3e/data/web/inc/functions.inc.php#L608):
 
@@ -81,16 +84,16 @@ As a workaround, you can hook IMAP authentication directly to mailcow by adding 
     }
 ```
 
-As a side-effect, It will also allow logging into mailcow UI using mailcow app passwords (since they are valid for IMAP). **It is not a supported solution with mailcow and has to be done only on your own risk!**
+As a side-effect, It will also allow logging into mailcow UI using mailcow app passwords (since they are valid for IMAP). **It is not a supported solution with mailcow and has to be done only at your own risk!**
 
-### Two-ways sync
+### Two-way sync
 
 Users from your LDAP directory will be added (and deactivated if disabled/not found) to your mailcow database. Not vice-versa, and this is by design.
 
-## Customizations & Integration help
+## Customizations and Integration support
 
-External authentication (identify federation) is an enterprise feature [for mailcow](https://github.com/mailcow/mailcow-dockerized/issues/2316#issuecomment-491212921). That’s why I developed an external solution, and it is unlikely that it’ll be directly integrated into mailcow ever.
+External authentication (identity federation) is an enterprise feature [for mailcow](https://github.com/mailcow/mailcow-dockerized/issues/2316#issuecomment-491212921). That’s why I developed an external solution, and it is unlikely that it’ll be ever directly integrated into mailcow.
 
-I’ve created this tool because I needed it for my regular work. You are free to use it for commercial needs. Please understand that I can work on issues only if they fall within the scope of my work interests or if I’ll have some available free time (never happened for many years). I’ll do my best to review submitted PRs ASAP, though.
+I’ve created this tool because I needed it for my regular work. You are free to use it for commercial needs. Please understand that I can work on issues only if they fall within the scope of my current work interests or if I’ll have some available free time (never happened for many years). I’ll do my best to review submitted PRs ASAP, though.
 
 **You can always [contact me](mailto:programmierus@gmail.com) to help you with the integration or for custom modifications on a paid basis. My current hourly rate (ActivityWatch tracked) is 100,-€ with 3h minimum commitment.**
