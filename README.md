@@ -7,7 +7,7 @@ Adds LDAP accounts to mailcow-dockerized and enables LDAP (e.g., Active Director
   * [LDAP Fine-tuning](#ldap-fine-tuning)
 * [Limitations](#limitations)
   * [WebUI and EAS authentication](#webui-and-eas-authentication)
-  * [Two-ways sync](#two-ways-sync)
+  * [Two-way sync](#two-way-sync)
 * [Customizations and Integration support](#customizations-and-integration-support)
 
 ## How does it work
