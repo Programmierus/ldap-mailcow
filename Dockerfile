@@ -11,4 +11,5 @@ VOLUME [ "/db" ]
 VOLUME [ "/conf/dovecot" ]
 VOLUME [ "/conf/sogo" ]
 
-ENTRYPOINT [ "entrypoint.sh" ]
+COPY        ./entrypoint.sh /entrypoint.sh
+CMD         ["/bin/ash", "/entrypoint.sh"]
