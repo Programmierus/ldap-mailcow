@@ -11,4 +11,4 @@ VOLUME [ "/db" ]
 VOLUME [ "/conf/dovecot" ]
 VOLUME [ "/conf/sogo" ]
 
-ENTRYPOINT [ "python3", "syncer.py" ]
+ENTRYPOINT [ "entrypoint.sh" ]
