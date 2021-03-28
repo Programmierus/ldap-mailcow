@@ -78,12 +78,12 @@ def sync():
             unchanged = False
 
         if api_user_active != ldap_active:
-            api.edit_user(email, active=ldap_active, replaceDomain)
+            api.edit_user(email, replaceDomain, active=ldap_active)
             logging.info (f"{'Activated' if ldap_active else 'Deactived'} {email} in Mailcow")
             unchanged = False
 
         if api_name != ldap_name:
-            api.edit_user(email, name=ldap_name, replaceDomain)
+            api.edit_user(email, replaceDomain, name=ldap_name)
             logging.info (f"Changed name of {email} in Mailcow to {ldap_name}")
             unchanged = False
 
@@ -94,7 +94,7 @@ def sync():
         (api_user_exists, api_user_active, _) = api.check_user(email, replaceDomain)
 
         if (api_user_active and api_user_active):
-            api.edit_user(email, active=False, replaceDomain)
+            api.edit_user(email, replaceDomain, active=False)
             logging.info (f"Deactivated user {email} in Mailcow, not found in LDAP")
         
         filedb.user_set_active_to(email, False)
