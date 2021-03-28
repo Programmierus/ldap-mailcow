@@ -33,7 +33,7 @@ def add_user(email, name, active, replaceDomain):
 
     __post_request('api/v1/add/mailbox', json_data)
 
-def edit_user(email, active=None, name=None, replaceDomain):
+def edit_user(email, replaceDomain, active=None, name=None):
     if replaceDomain is not None:
                  email = email.replace(email.split('@')[1], replaceDomain)
     attr = {}
