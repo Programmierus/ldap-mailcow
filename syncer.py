@@ -154,7 +154,7 @@ def read_config():
     config['SOGO_LDAP_FILTER'] = os.environ['LDAP-MAILCOW_SOGO_LDAP_FILTER'] if 'LDAP-MAILCOW_SOGO_LDAP_FILTER' in os.environ else "objectClass='user' AND objectCategory='person'"
 
     if 'LDAP-MAILCOW_REPLACE_DOMAIN' in os.environ:
-        config['SWAP_TLD'] = os.environ['LDAP-MAILCOW_REPLACE_DOMAIN']
+        config['REPLACE_DOMAIN'] = os.environ['LDAP-MAILCOW_REPLACE_DOMAIN']
 
     return config
 
