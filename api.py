@@ -18,7 +18,9 @@ def __post_request(url, json_data):
     if rsp['type'] != 'success':
         sys.exit(f"API {url}: {rsp['type']} - {rsp['msg']}")
 
-def add_user(email, name, active):
+def add_user(email, name, active, replaceDomain=None):
+    if replaceDomain is not None:
+                 email = email.replace(email.split('@')[1], replaceDomain)
     password = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
     json_data = {
         'local_part':email.split('@')[0],
@@ -31,7 +33,9 @@ def add_user(email, name, active):
 
     __post_request('api/v1/add/mailbox', json_data)
 
-def edit_user(email, active=None, name=None):
+def edit_user(email, active=None, name=None, replaceDomain=None):
+    if replaceDomain is not None:
+                 email = email.replace(email.split('@')[1], replaceDomain)
     attr = {}
     if (active is not None):
         attr['active'] = 1 if active else 0
@@ -45,12 +49,16 @@ def edit_user(email, active=None, name=None):
 
     __post_request('api/v1/edit/mailbox', json_data)
 
-def __delete_user(email):
+def __delete_user(email, replaceDomain=None):
+    if replaceDomain is not None:
+                 email = email.replace(email.split('@')[1], replaceDomain)
     json_data = [email]
 
     __post_request('api/v1/delete/mailbox', json_data)
 
-def check_user(email):
+def check_user(email, replaceDomain=None):
+    if replaceDomain is not None:
+                 email = email.replace(email.split('@')[1], replaceDomain)
     url = f"{api_host}/api/v1/get/mailbox/{email}"
     headers = {'X-API-Key': api_key, 'Content-type': 'application/json'}
     req = requests.get(url, headers=headers)
