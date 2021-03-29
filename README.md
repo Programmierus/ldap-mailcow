@@ -41,6 +41,7 @@ A python script periodically checks and creates new LDAP accounts and deactivate
             - LDAP-MAILCOW_SYNC_INTERVAL=300
             - LDAP-MAILCOW_LDAP_FILTER=(&(objectClass=user)(objectCategory=person)(memberOf:1.2.840.113556.1.4.1941:=CN=Group,CN=Users,DC=example DC=local))
             - LDAP-MAILCOW_SOGO_LDAP_FILTER=objectClass='user' AND objectCategory='person' AND memberOf:1.2.840.113556.1.4.1941:='CN=Group,CN=Users,DC=example DC=local'
+            - LDAP-MAILCOW_USER_ATTR=userPrincipalName
             #- LDAP-MAILCOW_REPLACE_DOMAIN=example.com
     ```
 
@@ -53,10 +54,11 @@ A python script periodically checks and creates new LDAP accounts and deactivate
     * `LDAP-MAILCOW_API_HOST` - mailcow API url. Make sure it's enabled and accessible from within the container for both reads and writes
     * `LDAP-MAILCOW_API_KEY` - mailcow API key (read/write)
     * `LDAP-MAILCOW_SYNC_INTERVAL` - interval in seconds between LDAP synchronizations
+    * `LDAP-MAILCOW_USER_ATTR` - user attribute to use
     * **Optional** LDAP filters (see example above). SOGo uses special syntax, so you either have to **specify both or none**:
         * `LDAP-MAILCOW_LDAP_FILTER` - LDAP filter to apply, defaults to `(&(objectClass=user)(objectCategory=person))`
         * `LDAP-MAILCOW_SOGO_LDAP_FILTER` - LDAP filter to apply for SOGo ([special syntax](https://sogo.nu/files/docs/SOGoInstallationGuide.html#_authentication_using_ldap)), defaults to `objectClass='user' AND objectCategory='person'`
-    * LDAP-MAILCOW_REPLACE_DOMAIN - **Optional** Replace domain (eg you have public domain and internal AD domain)
+    * `LDAP-MAILCOW_REPLACE_DOMAIN` - **Optional** Replace domain (eg you have public domain and internal AD domain)
 
 4. Start additional container: `docker-compose up -d ldap-mailcow`
 5. Check logs `docker-compose logs ldap-mailcow`
