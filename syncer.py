@@ -40,10 +40,10 @@ def sync():
 
     ldap_results = ldap_connector.search_s(config['LDAP_BASE_DN'], ldap.SCOPE_SUBTREE, 
                 config['LDAP_FILTER'], 
-                ['userPrincipalName', 'cn', 'userAccountControl'])
+                [config['USER_ATTR'], 'cn', 'userAccountControl'])
 
     ldap_results = map(lambda x: (
-        x[1]['userPrincipalName'][0].decode(),
+        x[1][config['USER_ATTR']][0].decode(),
         x[1]['cn'][0].decode(),
         False if int(x[1]['userAccountControl'][0].decode()) & 0b10 else True), ldap_results)
 
@@ -155,6 +155,9 @@ def read_config():
 
     if 'LDAP-MAILCOW_REPLACE_DOMAIN' in os.environ:
         config['REPLACE_DOMAIN'] = os.environ['LDAP-MAILCOW_REPLACE_DOMAIN']
+    
+    if 'LDAP-MAILCOW_USER_ATTR' in os.environ:
+        config['USER_ATTR'] = os.environ['LDAP-MAILCOW_USER_ATTR']
 
     return config
 
