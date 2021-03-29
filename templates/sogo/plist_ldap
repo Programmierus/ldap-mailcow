@@ -10,7 +10,7 @@
     <key>IDFieldName</key>
     <string>cn</string>
     <key>UIDFieldName</key>
-    <string>userPrincipalName</string>
+    <string>$user_attr</string>
 
     <key>baseDN</key>
     <string>$ldap_base_dn</string>
@@ -21,7 +21,7 @@
     <string>$ldap_bind_dn_password</string>
     <key>bindFields</key>
     <array>
-        <string>userPrincipalName</string>
+        <string>$user_attr</string>
     </array>
 
     <key>bindAsCurrentUser</key>

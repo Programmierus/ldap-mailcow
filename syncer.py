@@ -40,18 +40,23 @@ def sync():
 
     ldap_results = ldap_connector.search_s(config['LDAP_BASE_DN'], ldap.SCOPE_SUBTREE, 
                 config['LDAP_FILTER'], 
-                ['userPrincipalName', 'cn', 'userAccountControl'])
+                [config['USER_ATTR'], 'cn', 'userAccountControl'])
 
     ldap_results = map(lambda x: (
-        x[1]['userPrincipalName'][0].decode(),
+        x[1][config['USER_ATTR']][0].decode(),
         x[1]['cn'][0].decode(),
         False if int(x[1]['userAccountControl'][0].decode()) & 0b10 else True), ldap_results)
 
     filedb.session_time = datetime.datetime.now()
 
+    if 'REPLACE_DOMAIN' in config:
+        replaceDomain = config['REPLACE_DOMAIN']
+    else:
+        replaceDomain = None
+                                     
     for (email, ldap_name, ldap_active) in ldap_results:
         (db_user_exists, db_user_active) = filedb.check_user(email)
-        (api_user_exists, api_user_active, api_name) = api.check_user(email)
+        (api_user_exists, api_user_active, api_name) = api.check_user(email, replaceDomain)
 
         unchanged = True
 
@@ -62,7 +67,7 @@ def sync():
             unchanged = False
 
         if not api_user_exists:
-            api.add_user(email, ldap_name, ldap_active)
+            api.add_user(email, ldap_name, ldap_active, replaceDomain)
             (api_user_exists, api_user_active, api_name) = (True, ldap_active, ldap_name)
             logging.info (f"Added Mailcow user: {email} (Active: {ldap_active})")
             unchanged = False
@@ -73,12 +78,12 @@ def sync():
             unchanged = False
 
         if api_user_active != ldap_active:
-            api.edit_user(email, active=ldap_active)
+            api.edit_user(email, replaceDomain, active=ldap_active)
             logging.info (f"{'Activated' if ldap_active else 'Deactived'} {email} in Mailcow")
             unchanged = False
 
         if api_name != ldap_name:
-            api.edit_user(email, name=ldap_name)
+            api.edit_user(email, replaceDomain, name=ldap_name)
             logging.info (f"Changed name of {email} in Mailcow to {ldap_name}")
             unchanged = False
 
@@ -86,10 +91,10 @@ def sync():
             logging.info (f"Checked user {email}, unchanged")
 
     for email in filedb.get_unchecked_active_users():
-        (api_user_exists, api_user_active, _) = api.check_user(email)
+        (api_user_exists, api_user_active, _) = api.check_user(email, replaceDomain)
 
         if (api_user_active and api_user_active):
-            api.edit_user(email, active=False)
+            api.edit_user(email, replaceDomain, active=False)
             logging.info (f"Deactivated user {email} in Mailcow, not found in LDAP")
         
         filedb.user_set_active_to(email, False)
@@ -147,6 +152,12 @@ def read_config():
 
     config['LDAP_FILTER'] = os.environ['LDAP-MAILCOW_LDAP_FILTER'] if 'LDAP-MAILCOW_LDAP_FILTER' in os.environ else '(&(objectClass=user)(objectCategory=person))'
     config['SOGO_LDAP_FILTER'] = os.environ['LDAP-MAILCOW_SOGO_LDAP_FILTER'] if 'LDAP-MAILCOW_SOGO_LDAP_FILTER' in os.environ else "objectClass='user' AND objectCategory='person'"
+
+    if 'LDAP-MAILCOW_REPLACE_DOMAIN' in os.environ:
+        config['REPLACE_DOMAIN'] = os.environ['LDAP-MAILCOW_REPLACE_DOMAIN']
+    
+    if 'LDAP-MAILCOW_USER_ATTR' in os.environ:
+        config['USER_ATTR'] = os.environ['LDAP-MAILCOW_USER_ATTR']
 
     return config
 
